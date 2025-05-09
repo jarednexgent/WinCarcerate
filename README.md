@@ -36,7 +36,7 @@ C4 is a ransomware proof-of-concept that weaponizes the Rivest Cipher 4 (RC4) to
 
 No command-line arguments required. C4 will recurse each directory listed in the `g_Directories` global variable, encrypt eligible files, optionally drop a ransom note, then self-delete.
 
-[![c4-demo.gif](https://i.postimg.cc/d0Gjyqky/c4-demo.gif)](https://postimg.cc/DWyGV3cv)
+[![c4-demo-2.gif](https://i.postimg.cc/8cS0D1ZH/c4-demo-2.gif)](https://postimg.cc/WF5nwPLF)
 ---
 ### Configuration
 
