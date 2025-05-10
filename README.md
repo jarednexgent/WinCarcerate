@@ -1,6 +1,6 @@
 # C4
 
-#### Compact Ransomware POC with Built-in Anti-Analysis
+#### Lightweight Ransomware POC with Built-in Anti-Analysis
 
 
 > 🚨 **DISCLAIMER:**  
@@ -95,7 +95,8 @@ LPCWSTR g_BlacklistedExtensions[NUM_BLACKLISTED_EXTENSIONS] = {
 3. Go to **Project → Properties** and configure:  
    - **C/C++ → Code Generation → Runtime Library:** Multi-threaded (/MT)  
    - **C/C++ → Code Generation → Enable C++ Exceptions:** No  
-   - **C/C++ → Code Generation → Security Check:** Disable Security Check (/GS-)  
+   - **C/C++ → Code Generation → Security Check:** Disable Security Check (/GS-)
+   - **C/C++ → Code Generation → Basic Runtime Checks:** Default  
    - **C/C++ → General → SDL checks:** No (/sdl-)  
    - **C/C++ → Optimization → Whole Program Optimization:** No  
    - **Linker → Debugging → Generate Debug Info:** No  
