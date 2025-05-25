@@ -1,7 +1,6 @@
 # C4
 
-#### Lightweight Ransomware with Thread-Pool Concurrency 
-
+#### Lightweight Ransomware Simulator
 
 > 🚨 **DISCLAIMER:**  
 > This tool is provided **solely** for educational, research, and defensive-security purposes.  
