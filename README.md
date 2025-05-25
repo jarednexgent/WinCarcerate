@@ -1,6 +1,6 @@
 # C4
 
-#### Lightweight Ransomware PoC with Concurrent File Encryption + Anti-Analysis Techniques
+#### Lightweight Ransomware with Thread-Pool Concurrency 
 
 
 > 🚨 **DISCLAIMER:**  
