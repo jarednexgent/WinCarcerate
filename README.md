@@ -1,6 +1,6 @@
 # C4
 
-#### Lightweight Ransomware POC with Built-in Anti-Analysis
+#### Lightweight Ransomware PoC with Concurrent File Encryption + Anti-Analysis Techniques
 
 
 > 🚨 **DISCLAIMER:**  
