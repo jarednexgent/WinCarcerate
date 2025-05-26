@@ -339,7 +339,7 @@ BOOL ProcessDirectoryMT(LPCWSTR dir, BOOL encryptMode) {
     HANDLE hFind = FindFirstFileW(dirPathW, &fd);
     if (hFind == INVALID_HANDLE_VALUE) {
         if (g_Verbose)
-            PRINTW(L"[!] FindFirstFileW failed for %ls\n", dir);
+            PRINTW(L"[!] FindFirstFileW failed for %s\n", dir);
         return result;
     }
 
