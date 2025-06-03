@@ -7,9 +7,7 @@
 > Do **not** run C4 against any system you do not own or have **explicit** permission to test.  
 > Unauthorized or malicious use is **illegal** and the authors disclaim any liability for damages or legal consequences arising from misuse.
 
-
-[![C4-logo.png](https://i.postimg.cc/jSxWFJ6d/C4-logo.png)](https://postimg.cc/qzFMtqZ9)
-
+[![C4-logo.png](https://i.postimg.cc/xCk6CC7S/C4-logo.png)](https://postimg.cc/cgSRks0D)
 
 C4 is a ransomware proof-of-concept that weaponizes the Rivest Cipher 4 (RC4) to encrypt files in place. Compiled without the C runtime (CRT), its binary size stays under 15KB while retaining functionality like multithreading, anti-analysis, and optional self-deletion.
 
