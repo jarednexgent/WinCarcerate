@@ -11,7 +11,7 @@ CellBlock32 is a ransomware simulator for Windows. Built without the C runtime (
 
 ## Build
 
-Open ___x64 Native Tools Command Prompt for VS 2022___ and run `Builder.bat`. The script will:
+Open ___Developer Command Prompt for VS 2022___ and run `Builder.bat`. The script will:
 
 - Ask what to build (**Locker** or **Decryptor**).
 - Optionally set the **scan root** (default is defined in `config.h`).
@@ -48,3 +48,4 @@ Build started 9/8/2025 2:41:15 AM.
 No command-line arguments required. `CellBlock32.exe` will begin encrypting or decrypting files recursively, starting from the user-defined root directory. 
 
 [![cellblock32-demo.gif](https://i.postimg.cc/MpynCVmb/cellblock32-demo.gif)](https://postimg.cc/Wd1prDKh)
+
