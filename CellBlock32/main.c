@@ -266,7 +266,7 @@ int main() {
 
 #ifdef CONSOLE_STDOUT
     DWORD dwStartTime = (DWORD)GetTickCount64();
-#endif CONSOLE_STDOUT
+#endif
 
 
     Run(g_TargetDirs, g_EncryptMode);
@@ -278,7 +278,7 @@ int main() {
 #ifdef CONSOLE_STDOUT
     DWORD g_FinishTime = (DWORD)GetTickCount64() - dwStartTime;
     PRINT(L"[*] Time: %d ms\n", g_FinishTime);
-#endif CONSOLE_STDOUT
+#endif
 
 
 #ifdef SIMULATE_RANSOM
