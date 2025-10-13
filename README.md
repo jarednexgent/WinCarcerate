@@ -40,6 +40,6 @@ Build started 10/12/2025 5:09:22 PM.
 
 ## Usage
 
-No command-line arguments required. Upon execution, `WinCarcerate.exe` will begin encrypting or decrypting files recursively starting from directory set at build-time.
+No command-line arguments are required. On launch, `WinCarcerate.exe` recursively encrypts or decrypts files starting from the directory set at build time.
 
-[![wincarcerate-demo.gif](https://i.postimg.cc/4y6c7Xhf/wincarcerate-demo.gif)](https://postimg.cc/Wq4zxLnC)
+[![wincarcerate-demo.gif](https://i.postimg.cc/j5gPYRn3/wincarcerate-demo.gif)](https://postimg.cc/qhKz8VL2)
