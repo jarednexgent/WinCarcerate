@@ -7,7 +7,7 @@
 
 [![wincarcerate.png](https://i.postimg.cc/JnnD9zXz/wincarcerate.png)](https://postimg.cc/p9wLjxkw)
 
-**WinCarcerate** is a compact (~15 KB) Windows ransomware sample demonstrating Thread Pools, ChaCha20 symmetric encryption, and anti-analysis techniques. For training and research only.
+**WinCarcerate** is a compact (~15 KB) Windows ransomware sample demonstrating thread pools, ChaCha20 encryption, and anti-analysis techniques. For training and research only.
 
 ## Build 
 
@@ -37,4 +37,5 @@ Building with the LLVM toolchain requires [MSBuild support for LLVM (clang-cl) t
 No command-line arguments are required. On launch, `WinCarcerate.exe` recursively encrypts or decrypts files starting at the build-time root directory. 
 
 [![wincarcerate-demo.gif](https://i.postimg.cc/j5gPYRn3/wincarcerate-demo.gif)](https://postimg.cc/qhKz8VL2)
+
 
